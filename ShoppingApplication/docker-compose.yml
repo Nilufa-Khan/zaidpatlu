@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  product-service:
+    image: product_image
+    container_name: product-service
+    build: UserProductService/
+    restart: always
+    network_mode: customer-network
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongoService
+
+  mongoService:
+    image: mongo
+    container_name: mongoService
+    ports:
+      - 27017:27017
+    network_mode: customer-network
+
+  authentication-service:
+    image: authentication_image
+    container_name: authentication-service
+    build: UserAuthenticationService/
+    restart: always
+    network_mode: customer-network
+    ports:
+      - 8085:8085
+    depends_on:
+      - mysqlService
+
+  mysqlService:
+    image: mysql:latest
+    container_name: mysqlService
+    network_mode: customer-network
+    ports:
+      - 3306:3306
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
